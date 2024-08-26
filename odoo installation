@@ -1,0 +1,127 @@
+ The much-anticipated release of Odoo version 16 has finally arrived. For the Community Edition Source Code, visit the GitHub LINK provided.
+
+
+In this comprehensive guide, I will walk you through the process of installing Odoo version 16 (Community Edition) on your Ubuntu 20.04 system.
+
+If you already have Python installed, please ensure it is at least version 3.5 or the latest.
+
+To begin, open your terminal and carefully execute the following commands, step-by-step, to achieve optimal results:
+Step 1 :
+Update the apt source lists:
+sudo apt-get update
+Step 2 :
+Create the Odoo user who will own and operate the application:
+sudo adduser --system --home=/opt/odoo --group odoo
+Step 3 :
+Install and configure the PostgreSQL database server:
+sudo apt-get install -y postgresql
+After successfully installing PostgreSQL, the next step is setting up a new user dedicated to our Odoo application. This user will handle all interactions with the database on behalf of Odoo.
+sudo service postgresql start
+
+sudo su - postgres
+
+createuser --createdb --username postgres --no-createrole --no-superuser --pwprompt odoo
+Enter password for new role: *****
+Enter it again:*****
+Finally, exit from the Postgres user account.
+exit
+Step 4:
+Installing Odoo version 16 Community Edition hosted on GitHub. Ensure that GIT is installed on your system; if not, install it using the simple command:
+sudo apt-get install -y git
+Switch to the Odoo user account.
+sudo su - odoo -s /bin/bash
+Clone the latest branch of Odoo, which, in our case, is version 16.0 from GitHub.
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 16.0 --single-branch .
+exit
+Step 5:
+Install the necessary Python libraries and other dependencies required for the application. Odoo 16 will utilize Python 3.5 (which comes pre-installed on Ubuntu). To easily install all dependent libraries, we'll install pip3 on our server as follows:
+sudo apt-get install -y python3-pip
+Once pip3 is installed, we can proceed with installing the other necessary libraries using pip3 as well.
+pip3 install -r requirements.txt
+or
+pip3 install Babel decorator docutils ebaysdk 
+feedparser gevent greenlet html2text Jinja2 
+lxml Mako MarkupSafe mock num2words ofxparse 
+passlib xlwt Pillow psutil psycogreen psycopg2 
+pydot pyparsing XlsxWriter PyPDF2 pyserial 
+python-dateutil python-openid xlrd pytz pyusb 
+PyYAML qrcode reportlab requests six suds-jurko 
+vatnumber vobject Werkzeug 
+Next, we'll install Odoo Web Dependencies.
+
+sudo apt-get install -y npm
+sudo ln -s /usr/bin/nodejs /usr/bin/node
+sudo npm install -g less less-plugin-clean-css
+sudo apt-get install -y node-less
+With all the packages in place, we are now ready to proceed with the installation of the Odoo server.
+Step 6:
+The next task is to create a configuration file for Odoo. But before doing so, we'll create a directory to store the server logs and assign proper ownership to it:
+
+sudo mkdir /var/log/odoo
+sudo chown odoo:root /var/log/odoo
+Next, create the configuration file for the Odoo server. The application will utilize these configurations to run based on your specific requirements.
+sudo nano /etc/odoo-server.conf
+A sample configuration file will resemble the following:
+[options]
+; This is the password that allows database operations:
+; admin_passwd = admin
+db_host = False
+db_port = False
+db_user = odoo
+db_password = False
+logfile = /var/log/odoo/odoo-server.log
+addons_path = /opt/odoo/addons,/opt/odoo/odoo/addons
+(Make sure to use the same password you used back in Step 3.)
+
+
+Once the configuration file is created, we will set the ownership rights accordingly.
+
+sudo chown odoo: /etc/odoo-server.conf
+sudo chmod 640 /etc/odoo-server.conf
+Step 7:
+Create a service using the commands mentioned above:
+sudo cp odoo-service new_file_name
+or
+sudo nano new_file_name
+Make the init.d file executable and ensure it is owned by the root:
+sudo chmod 755 /etc/init.d/new_file_name
+sudo chmod root /etc/init.d/new_file_name
+now execute this command:
+sudo systemctl daemon-reload
+sudo service new_file_name restart
+if you don't want to create a new service file then use this command:
+sudo chmod 755 /etc/init.d/odoo-server
+sudo chown root: /etc/init.d/odoo-server
+Step 8:
+Testing the server:
+
+To start the Odoo server, type:
+sudo /etc/init.d/odoo-server start
+You should now be able to view the log-file as follows:
+sudo nano /var/log/odoo/odoo-server.log
+If you encounter any issues during this step, feel free to comment on this blog, and I'll do my utmost to assist you.
+
+
+[OPTIONAL] Additionally, for debugging purposes, you can start the server manually to check if it runs smoothly, using the following commands:
+
+sudo su - odoo
+[sudo] password for user_name:
+cd odoo-server
+./odoo-bin
+If the log file appears satisfactory, you can access the Odoo server in your browser using the URL:
+
+
+http://0.0.0.0:8069/
+or
+http://localhost:8069/
+How to run the server:
+For start the server:
+sudo service odoo-server start
+For stop the server:
+sudo service odoo-server stop
+For restart the server:
+sudo service odoo-server restart
+That's a wrap!
+
+
+Thank you for taking the time to read this blog! I sincerely hope it proves to be helpful to someone.
